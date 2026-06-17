@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VisionInspect AI</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#0f172a;
+    font-family:Arial, Helvetica, sans-serif;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* CONTENEDOR */
+
+.container{
+    width:95%;
+    max-width:1400px;
+    margin:30px auto;
+}
+
+/* HEADER */
+
+.header{
+    background:#111827;
+    padding:25px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0px 0px 25px rgba(56,189,248,0.3);
+}
+
+.header h1{
+    color:#38bdf8;
+    font-size:60px;
+    margin-bottom:10px;
+}
+
+.header p{
+    color:#cbd5e1;
+    font-size:18px;
+}
+
+/* DASHBOARD */
+
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+    margin-top:30px;
+}
+
+.card-info{
+    background:#111827;
+    padding:25px;
+    border-radius:20px;
+    text-align:center;
+    transition:0.3s;
+    box-shadow:0px 0px 15px rgba(0,0,0,0.4);
+}
+
+.card-info:hover{
+    transform:translateY(-5px);
+    box-shadow:0px 0px 25px rgba(56,189,248,0.3);
+}
+
+.card-info h2{
+    color:#38bdf8;
+    margin-bottom:15px;
+    font-size:30px;
+}
+
+.card-info p{
+    color:#e2e8f0;
+    font-size:18px;
+}
+
+/* SUBIR IMAGEN */
+
+.upload{
+    background:#111827;
+    margin-top:30px;
+    padding:35px;
+    border-radius:20px;
+    text-align:center;
+}
+
+input[type="file"]{
+    padding:14px;
+    background:white;
+    border-radius:12px;
+    font-size:15px;
+}
+
+.main-btn{
+    margin-top:20px;
+    padding:15px 30px;
+    border:none;
+    border-radius:12px;
+    background:#38bdf8;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.main-btn:hover{
+    background:#0284c7;
+    transform:scale(1.05);
+}
+
+/* RESULTADO */
+
+.resultado{
+    margin-top:30px;
+    background:#111827;
+    padding:25px;
+    border-radius:20px;
+    text-align:center;
+    animation:aparecer 0.5s ease;
+}
+
+.estado{
+    font-size:42px;
+    margin-bottom:15px;
+}
+
+.porcentaje{
+    font-size:28px;
+    color:#38bdf8;
+}
+
+/* GALERIA */
+
+.galeria{
+    display:flex;
+    gap:30px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:30px;
+}
+
+.card{
+    background:#111827;
+    padding:20px;
+    border-radius:20px;
+    width:500px;
+    text-align:center;
+    box-shadow:0px 0px 20px rgba(56,189,248,0.2);
+}
+
+.card img{
+    width:100%;
+    border-radius:15px;
+    border:4px solid #38bdf8;
+}
+
+.card h3{
+    margin-bottom:20px;
+    color:#38bdf8;
+    font-size:30px;
+}
+
+/* FOOTER */
+
+.footer{
+    text-align:center;
+    margin-top:40px;
+    color:#94a3b8;
+    margin-bottom:30px;
+    font-size:17px;
+}
+
+/* BOTON FLOTANTE */
+
+.chat-toggle{
+
+    position:fixed;
+
+    bottom:25px;
+    right:25px;
+
+    width:75px;
+    height:75px;
+
+    border-radius:50%;
+
+    background:#38bdf8;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:36px;
+
+    cursor:pointer;
+
+    box-shadow:0px 0px 30px rgba(56,189,248,0.8);
+
+    z-index:9999;
+
+    transition:0.3s;
+}
+
+.chat-toggle:hover{
+
+    transform:scale(1.1);
+}
+
+/* CHATBOT */
+
+.chatbot{
+
+    position:fixed;
+
+    bottom:110px;
+    right:25px;
+
+    width:320px;
+    height:420px;
+
+    background:#111827;
+
+    border-radius:25px;
+
+    overflow:hidden;
+
+    display:none;
+
+    flex-direction:column;
+
+    box-shadow:0px 0px 35px rgba(56,189,248,0.5);
+
+    z-index:9999;
+
+    animation:aparecer 0.3s ease;
+}
+
+/* HEADER CHAT */
+
+.chat-header{
+
+    background:#38bdf8;
+
+    padding:15px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    font-size:17px;
+    font-weight:bold;
+}
+
+/* BOTON CERRAR */
+
+.cerrar-chat{
+
+    width:34px;
+    height:34px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,0.2);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    font-size:16px;
+}
+
+.cerrar-chat:hover{
+
+    background:red;
+
+    transform:rotate(90deg);
+}
+
+/* BODY CHAT */
+
+.chat-body{
+
+    flex:1;
+
+    overflow-y:auto;
+
+    padding:15px;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:12px;
+
+    background:#0f172a;
+}
+
+/* MENSAJES */
+
+.bot-message{
+
+    background:#1e293b;
+
+    padding:12px;
+
+    border-radius:15px;
+
+    max-width:85%;
+
+    align-self:flex-start;
+
+    line-height:1.4;
+
+    font-size:14px;
+
+    animation:aparecer 0.3s ease;
+}
+
+.user-message{
+
+    background:#2563eb;
+
+    padding:12px;
+
+    border-radius:15px;
+
+    max-width:85%;
+
+    align-self:flex-end;
+
+    line-height:1.4;
+
+    font-size:14px;
+
+    animation:aparecer 0.3s ease;
+}
+
+/* INPUT CHAT */
+
+.chat-input{
+
+    display:flex;
+
+    padding:12px;
+
+    background:#111827;
+
+    gap:8px;
+}
+
+.chat-input input{
+
+    flex:1;
+
+    border:none;
+
+    padding:12px;
+
+    border-radius:12px;
+
+    outline:none;
+
+    font-size:14px;
+}
+
+.send-btn{
+
+    border:none;
+
+    background:#38bdf8;
+
+    color:white;
+
+    padding:12px 16px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    font-size:14px;
+}
+
+.send-btn:hover{
+
+    background:#0284c7;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+    .chatbot{
+
+        width:90%;
+        right:5%;
+        height:400px;
+    }
+
+    .header h1{
+        font-size:40px;
+    }
+
+    .card{
+        width:100%;
+    }
+}
+
+/* ANIMACION */
+
+@keyframes aparecer{
+
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0px);
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>VisionInspect AI</h1>
+
+        <p>
+            Sistema inteligente de inspección visual industrial con Inteligencia Artificial
+        </p>
+
+    </div>
+
+    <!-- DASHBOARD -->
+
+    <div class="dashboard">
+
+        <div class="card-info">
+            <h2>IA Industrial</h2>
+            <p>OpenCV + Visión Computacional</p>
+        </div>
+
+        <div class="card-info">
+            <h2>Detección</h2>
+            <p>Grietas, bordes y defectos</p>
+        </div>
+
+        <div class="card-info">
+            <h2>Estado</h2>
+            <p>Análisis automático en tiempo real</p>
+        </div>
+
+    </div>
+
+    <!-- SUBIDA -->
+
+    <div class="upload">
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <input
+                type="file"
+                name="imagen"
+                required
+            >
+
+            <br>
+
+            <button
+                type="submit"
+                class="main-btn"
+            >
+                Analizar Producto
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- RESULTADO -->
+
+    {% if resultado %}
+
+    <div class="resultado">
+
+        <div class="estado">
+            {{ resultado }}
+        </div>
+
+        <div class="porcentaje">
+            Nivel de daño detectado:
+            {{ porcentaje }}%
+        </div>
+
+    </div>
+
+    <!-- GALERIA -->
+
+    <div class="galeria">
+
+        <div class="card">
+
+            <h3>Imagen Original</h3>
+
+            <img
+                src="{{ url_for('static', filename='uploads/' + imagen) }}"
+            >
+
+        </div>
+
+        <div class="card">
+
+            <h3>Análisis IA</h3>
+
+            <img
+                src="{{ url_for('static', filename='procesadas/' + procesada) }}"
+            >
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+        Proyecto escolar — Inteligencia Artificial aplicada a Manufactura
+    </div>
+
+</div>
+
+<!-- BOTON FLOTANTE -->
+
+<div
+    class="chat-toggle"
+    onclick="abrirChat()"
+>
+    🤖
+</div>
+
+<!-- CHATBOT -->
+
+<div
+    class="chatbot"
+    id="chatbot"
+>
+
+    <div class="chat-header">
+
+        <span>
+            🤖 VisionInspect AI
+        </span>
+
+        <div
+            class="cerrar-chat"
+            onclick="cerrarChat()"
+        >
+            ✖
+        </div>
+
+    </div>
+
+    <!-- BODY CHAT -->
+
+    <div
+        class="chat-body"
+        id="chat-body"
+    >
+
+        <div class="bot-message">
+            Hola 👋<br><br>
+            Soy VisionInspect AI.<br>
+            ¿En qué puedo ayudarte?
+        </div>
+
+    </div>
+
+    <!-- INPUT -->
+
+    <div class="chat-input">
+
+        <input
+            type="text"
+            id="mensaje"
+            placeholder="Escribe una pregunta..."
+        >
+
+        <button
+            class="send-btn"
+            onclick="enviarMensaje()"
+        >
+            Enviar
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+/* ABRIR CHAT */
+
+function abrirChat(){
+
+    let chat = document.getElementById(
+        'chatbot'
+    )
+
+    chat.style.display = 'flex'
+}
+
+/* CERRAR CHAT */
+
+function cerrarChat(){
+
+    let chat = document.getElementById(
+        'chatbot'
+    )
+
+    chat.style.display = 'none'
+}
+
+/* ENVIAR MENSAJE */
+
+async function enviarMensaje(){
+
+    let input = document.getElementById(
+        "mensaje"
+    )
+
+    let mensaje = input.value.trim()
+
+    if(mensaje === ""){
+        return
+    }
+
+    let chat = document.getElementById(
+        "chat-body"
+    )
+
+    /* MENSAJE USUARIO */
+
+    chat.innerHTML += `
+        <div class="user-message">
+            ${mensaje}
+        </div>
+    `
+
+    chat.scrollTop = chat.scrollHeight
+
+    input.value = ""
+
+    /* MENSAJE CARGANDO */
+
+    chat.innerHTML += `
+        <div
+            class="bot-message"
+            id="cargando"
+        >
+            🤖 Pensando...
+        </div>
+    `
+
+    chat.scrollTop = chat.scrollHeight
+
+    /* ENVIAR A FLASK */
+
+    let formData = new FormData()
+
+    formData.append(
+        "mensaje",
+        mensaje
+    )
+
+    try{
+
+        let respuesta = await fetch(
+            '/chat',
+            {
+                method:'POST',
+                body:formData
+            }
+        )
+
+        let data = await respuesta.json()
+
+        /* BORRAR CARGANDO */
+
+        let cargando = document.getElementById(
+            'cargando'
+        )
+
+        if(cargando){
+            cargando.remove()
+        }
+
+        /* RESPUESTA IA */
+
+        chat.innerHTML += `
+            <div class="bot-message">
+                ${data.respuesta}
+            </div>
+        `
+
+    }catch(error){
+
+        let cargando = document.getElementById(
+            'cargando'
+        )
+
+        if(cargando){
+            cargando.remove()
+        }
+
+        chat.innerHTML += `
+            <div class="bot-message">
+                ❌ Error conectando con Gemini AI
+            </div>
+        `
+    }
+
+    chat.scrollTop = chat.scrollHeight
+}
+
+/* ENVIAR CON ENTER */
+
+document.getElementById(
+    'mensaje'
+).addEventListener(
+    'keypress',
+    function(e){
+
+        if(e.key === 'Enter'){
+
+            e.preventDefault()
+
+            enviarMensaje()
+        }
+    }
+)
+
+</script>
+
+</body>
+</html>
