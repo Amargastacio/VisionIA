@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 from uuid import uuid4
@@ -47,6 +46,21 @@ OLLAMA_MODEL = os.getenv(
 )
 
 # =========================================
+# ÚLTIMO ANÁLISIS REALIZADO
+# =========================================
+
+ultimo_analisis = {
+    "hay_analisis": False,
+    "resultado": "Todavía no se ha analizado ninguna imagen.",
+    "porcentaje": 0,
+    "defectos_detectados": 0,
+    "imagen": None,
+    "procesada": None,
+    "zonas_detectadas": [],
+    "descripcion": "No hay análisis disponible todavía."
+}
+
+# =========================================
 # CREAR CARPETAS
 # =========================================
 
@@ -91,6 +105,8 @@ def archivo_permitido(nombre_archivo):
 @app.route("/", methods=["GET", "POST"])
 def index():
 
+    global ultimo_analisis
+
     resultado = None
     imagen = None
     procesada = None
@@ -110,7 +126,8 @@ def index():
                 resultado="❌ No se seleccionó ninguna imagen",
                 imagen=None,
                 procesada=None,
-                porcentaje=0
+                porcentaje=0,
+                defectos_detectados=0
             )
 
         archivo = request.files["imagen"]
@@ -122,7 +139,8 @@ def index():
                 resultado="❌ El archivo seleccionado no es válido",
                 imagen=None,
                 procesada=None,
-                porcentaje=0
+                porcentaje=0,
+                defectos_detectados=0
             )
 
         if not archivo_permitido(archivo.filename):
@@ -132,7 +150,8 @@ def index():
                 resultado="❌ Formato no permitido. Usa PNG, JPG, JPEG o WEBP",
                 imagen=None,
                 procesada=None,
-                porcentaje=0
+                porcentaje=0,
+                defectos_detectados=0
             )
 
         try:
@@ -176,7 +195,8 @@ def index():
                     resultado="❌ No se pudo leer la imagen",
                     imagen=None,
                     procesada=None,
-                    porcentaje=0
+                    porcentaje=0,
+                    defectos_detectados=0
                 )
 
             # =========================================
@@ -253,6 +273,8 @@ def index():
             # MARCAR POSIBLES DEFECTOS
             # =========================================
 
+            zonas_detectadas = []
+
             for contorno in contornos:
 
                 area = cv2.contourArea(
@@ -267,6 +289,14 @@ def index():
                     x, y, w, h = cv2.boundingRect(
                         contorno
                     )
+
+                    zonas_detectadas.append({
+                        "x": int(x),
+                        "y": int(y),
+                        "ancho": int(w),
+                        "alto": int(h),
+                        "area": round(float(area), 2)
+                    })
 
                     cv2.rectangle(
                         img,
@@ -299,9 +329,21 @@ def index():
 
                 resultado = "✖ DEFECTO DETECTADO"
 
+                descripcion = (
+                    f"VisionIA detectó posibles defectos en la imagen. "
+                    f"El nivel de daño fue de {porcentaje}% y se encontraron "
+                    f"aproximadamente {defectos_detectados} zonas marcadas."
+                )
+
             else:
 
                 resultado = "✔ PRODUCTO CORRECTO"
+
+                descripcion = (
+                    f"VisionIA no detectó un nivel alto de daño. "
+                    f"El porcentaje encontrado fue de {porcentaje}% y se marcaron "
+                    f"{defectos_detectados} posibles zonas."
+                )
 
             # =========================================
             # GUARDAR IMAGEN PROCESADA
@@ -326,6 +368,21 @@ def index():
             imagen = nombre
             procesada = nombre
 
+            # =========================================
+            # GUARDAR ÚLTIMO ANÁLISIS PARA OLLAMA
+            # =========================================
+
+            ultimo_analisis = {
+                "hay_analisis": True,
+                "resultado": resultado,
+                "porcentaje": porcentaje,
+                "defectos_detectados": defectos_detectados,
+                "imagen": imagen,
+                "procesada": procesada,
+                "zonas_detectadas": zonas_detectadas[:10],
+                "descripcion": descripcion
+            }
+
             print("\n✅ Imagen procesada correctamente")
             print(f"📊 Porcentaje detectado: {porcentaje}%")
             print(
@@ -349,6 +406,18 @@ def index():
         procesada=procesada,
         porcentaje=porcentaje,
         defectos_detectados=defectos_detectados
+    )
+
+
+# =========================================
+# CONSULTAR ÚLTIMO ANÁLISIS
+# =========================================
+
+@app.route("/ultimo-analisis", methods=["GET"])
+def obtener_ultimo_analisis():
+
+    return jsonify(
+        ultimo_analisis
     )
 
 
@@ -381,9 +450,65 @@ def chat():
         print("\n📩 MENSAJE DEL USUARIO:")
         print(mensaje)
 
-        instrucciones = """
-Eres VisionIA, un asistente virtual especializado en:
+        # =========================================
+        # CONTEXTO DEL ÚLTIMO ANÁLISIS
+        # =========================================
 
+        zonas_texto = "No hay zonas registradas."
+
+        if ultimo_analisis["zonas_detectadas"]:
+
+            zonas_texto = ""
+
+            for i, zona in enumerate(
+                ultimo_analisis["zonas_detectadas"],
+                start=1
+            ):
+
+                zonas_texto += (
+                    f"Zona {i}: "
+                    f"x={zona['x']}, "
+                    f"y={zona['y']}, "
+                    f"ancho={zona['ancho']}, "
+                    f"alto={zona['alto']}, "
+                    f"área={zona['area']}.\n"
+                )
+
+        contexto_analisis = f"""
+Último análisis realizado por VisionIA:
+
+¿Ya se analizó una imagen?: {ultimo_analisis["hay_analisis"]}
+Resultado: {ultimo_analisis["resultado"]}
+Porcentaje de daño detectado: {ultimo_analisis["porcentaje"]}%
+Cantidad aproximada de defectos encontrados: {ultimo_analisis["defectos_detectados"]}
+Imagen original guardada: {ultimo_analisis["imagen"]}
+Imagen procesada guardada: {ultimo_analisis["procesada"]}
+
+Descripción del análisis:
+{ultimo_analisis["descripcion"]}
+
+Zonas detectadas:
+{zonas_texto}
+
+Nota técnica:
+El análisis fue realizado con OpenCV. El proceso usado fue:
+1. Redimensionar la imagen.
+2. Convertir la imagen a escala de grises.
+3. Aplicar reducción de ruido con GaussianBlur.
+4. Detectar bordes con Canny.
+5. Buscar contornos.
+6. Dibujar rectángulos rojos sobre las posibles zonas defectuosas.
+"""
+
+        instrucciones = f"""
+Eres VisionIA, un asistente virtual del proyecto VisionIA.
+
+Información del proyecto:
+VisionIA es una aplicación web hecha con Flask, OpenCV y Ollama.
+Su función principal es permitir que el usuario suba una imagen de un producto,
+analizarla y marcar posibles defectos con rectángulos rojos.
+
+Tu especialidad:
 - Inteligencia artificial
 - Visión computacional
 - OpenCV
@@ -392,10 +517,18 @@ Eres VisionIA, un asistente virtual especializado en:
 - Automatización industrial
 - Detección de defectos en productos
 
-Responde en español.
-Explica de manera clara, corta y fácil de entender.
-No inventes información.
-Si no conoces la respuesta, indícalo claramente.
+Información disponible del último análisis:
+{contexto_analisis}
+
+Reglas para responder:
+- Responde siempre en español.
+- Usa un lenguaje claro, corto y fácil de entender.
+- Si el usuario pregunta sobre la imagen, responde usando el último análisis realizado.
+- Si todavía no se ha analizado ninguna imagen, dile que primero debe subir y analizar una imagen.
+- No digas que estás viendo directamente la imagen.
+- Explica que respondes con base en el análisis realizado por VisionIA con OpenCV.
+- No inventes datos que no estén en el análisis.
+- Si te preguntan "qué analizaste", menciona el resultado, porcentaje, cantidad de defectos y proceso usado.
 """
 
         datos_ollama = {
@@ -404,7 +537,7 @@ Si no conoces la respuesta, indícalo claramente.
             "prompt": mensaje,
             "stream": False,
             "options": {
-                "temperature": 0.4
+                "temperature": 0.3
             }
         }
 
@@ -516,7 +649,8 @@ def archivo_demasiado_grande(error):
         resultado="❌ La imagen supera el límite de 10 MB",
         imagen=None,
         procesada=None,
-        porcentaje=0
+        porcentaje=0,
+        defectos_detectados=0
     ), 413
 
 
@@ -534,5 +668,4 @@ if __name__ == "__main__":
         host="127.0.0.1",
         port=5000,
         debug=True
-    );
-
+    )

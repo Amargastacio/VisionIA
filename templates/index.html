@@ -1,3 +1,4 @@
+```html id="gekh6z"
 <!DOCTYPE html>
 <html lang="es">
 
@@ -6,7 +7,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>VisionInspect AI</title>
+<title>VisionIA</title>
 
 <style>
 
@@ -99,8 +100,10 @@ body{
 input[type="file"]{
     padding:14px;
     background:white;
+    color:#0f172a;
     border-radius:12px;
     font-size:15px;
+    max-width:100%;
 }
 
 .main-btn{
@@ -139,6 +142,18 @@ input[type="file"]{
 .porcentaje{
     font-size:28px;
     color:#38bdf8;
+    margin-bottom:10px;
+}
+
+.defectos{
+    font-size:20px;
+    color:#cbd5e1;
+}
+
+.sugerencia{
+    margin-top:15px;
+    color:#94a3b8;
+    font-size:16px;
 }
 
 /* GALERIA */
@@ -185,221 +200,171 @@ input[type="file"]{
 /* BOTON FLOTANTE */
 
 .chat-toggle{
-
     position:fixed;
-
     bottom:25px;
     right:25px;
-
     width:75px;
     height:75px;
-
     border-radius:50%;
-
     background:#38bdf8;
-
     display:flex;
     justify-content:center;
     align-items:center;
-
     font-size:36px;
-
     cursor:pointer;
-
     box-shadow:0px 0px 30px rgba(56,189,248,0.8);
-
     z-index:9999;
-
     transition:0.3s;
 }
 
 .chat-toggle:hover{
-
     transform:scale(1.1);
 }
 
 /* CHATBOT */
 
 .chatbot{
-
     position:fixed;
-
     bottom:110px;
     right:25px;
-
-    width:320px;
-    height:420px;
-
+    width:340px;
+    height:450px;
     background:#111827;
-
     border-radius:25px;
-
     overflow:hidden;
-
     display:none;
-
     flex-direction:column;
-
     box-shadow:0px 0px 35px rgba(56,189,248,0.5);
-
     z-index:9999;
-
     animation:aparecer 0.3s ease;
 }
 
 /* HEADER CHAT */
 
 .chat-header{
-
     background:#38bdf8;
-
     padding:15px;
-
     display:flex;
     justify-content:space-between;
     align-items:center;
-
     font-size:17px;
     font-weight:bold;
+    color:white;
 }
 
 /* BOTON CERRAR */
 
 .cerrar-chat{
-
     width:34px;
     height:34px;
-
     border-radius:50%;
-
     background:rgba(255,255,255,0.2);
-
     display:flex;
     justify-content:center;
     align-items:center;
-
     cursor:pointer;
-
     transition:0.3s;
-
     font-size:16px;
 }
 
 .cerrar-chat:hover{
-
     background:red;
-
     transform:rotate(90deg);
 }
 
 /* BODY CHAT */
 
 .chat-body{
-
     flex:1;
-
     overflow-y:auto;
-
     padding:15px;
-
     display:flex;
     flex-direction:column;
-
     gap:12px;
-
     background:#0f172a;
 }
 
 /* MENSAJES */
 
 .bot-message{
-
     background:#1e293b;
-
     padding:12px;
-
     border-radius:15px;
-
     max-width:85%;
-
     align-self:flex-start;
-
     line-height:1.4;
-
     font-size:14px;
-
     animation:aparecer 0.3s ease;
+    white-space:normal;
 }
 
 .user-message{
-
     background:#2563eb;
-
     padding:12px;
-
     border-radius:15px;
-
     max-width:85%;
-
     align-self:flex-end;
-
     line-height:1.4;
-
     font-size:14px;
-
     animation:aparecer 0.3s ease;
+    white-space:normal;
 }
 
 /* INPUT CHAT */
 
 .chat-input{
-
     display:flex;
-
     padding:12px;
-
     background:#111827;
-
     gap:8px;
 }
 
 .chat-input input{
-
     flex:1;
-
     border:none;
-
     padding:12px;
-
     border-radius:12px;
-
     outline:none;
-
     font-size:14px;
 }
 
 .send-btn{
-
     border:none;
-
     background:#38bdf8;
-
     color:white;
-
     padding:12px 16px;
-
     border-radius:12px;
-
     cursor:pointer;
-
     transition:0.3s;
-
     font-size:14px;
 }
 
 .send-btn:hover{
-
     background:#0284c7;
+}
+
+/* BOTONES RAPIDOS */
+
+.quick-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:5px;
+}
+
+.quick-btn{
+    border:none;
+    background:#334155;
+    color:white;
+    padding:8px 10px;
+    border-radius:10px;
+    font-size:12px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.quick-btn:hover{
+    background:#38bdf8;
 }
 
 /* RESPONSIVE */
@@ -407,10 +372,9 @@ input[type="file"]{
 @media(max-width:768px){
 
     .chatbot{
-
         width:90%;
         right:5%;
-        height:400px;
+        height:430px;
     }
 
     .header h1{
@@ -419,6 +383,14 @@ input[type="file"]{
 
     .card{
         width:100%;
+    }
+
+    .estado{
+        font-size:32px;
+    }
+
+    .porcentaje{
+        font-size:22px;
     }
 }
 
@@ -449,7 +421,7 @@ input[type="file"]{
 
     <div class="header">
 
-        <h1>VisionInspect AI</h1>
+        <h1>VisionIA</h1>
 
         <p>
             Sistema inteligente de inspección visual industrial con Inteligencia Artificial
@@ -462,18 +434,18 @@ input[type="file"]{
     <div class="dashboard">
 
         <div class="card-info">
-            <h2>IA Industrial</h2>
-            <p>OpenCV + Visión Computacional</p>
+            <h2>IA Local</h2>
+            <p>Ollama + Asistente inteligente</p>
         </div>
 
         <div class="card-info">
-            <h2>Detección</h2>
-            <p>Grietas, bordes y defectos</p>
+            <h2>Visión Computacional</h2>
+            <p>OpenCV para detectar bordes y defectos</p>
         </div>
 
         <div class="card-info">
-            <h2>Estado</h2>
-            <p>Análisis automático en tiempo real</p>
+            <h2>Análisis</h2>
+            <p>Resultado automático de producto correcto o defectuoso</p>
         </div>
 
     </div>
@@ -487,6 +459,7 @@ input[type="file"]{
             <input
                 type="file"
                 name="imagen"
+                accept=".png,.jpg,.jpeg,.webp"
                 required
             >
 
@@ -518,6 +491,15 @@ input[type="file"]{
             {{ porcentaje }}%
         </div>
 
+        <div class="defectos">
+            Posibles defectos encontrados:
+            {{ defectos_detectados }}
+        </div>
+
+        <div class="sugerencia">
+            Puedes preguntarle al asistente: “¿Qué analizaste de la imagen?”
+        </div>
+
     </div>
 
     <!-- GALERIA -->
@@ -530,6 +512,7 @@ input[type="file"]{
 
             <img
                 src="{{ url_for('static', filename='uploads/' + imagen) }}"
+                alt="Imagen original analizada"
             >
 
         </div>
@@ -540,6 +523,7 @@ input[type="file"]{
 
             <img
                 src="{{ url_for('static', filename='procesadas/' + procesada) }}"
+                alt="Imagen procesada con detección de defectos"
             >
 
         </div>
@@ -575,7 +559,7 @@ input[type="file"]{
     <div class="chat-header">
 
         <span>
-            🤖 VisionInspect AI
+            🤖 VisionIA
         </span>
 
         <div
@@ -596,8 +580,49 @@ input[type="file"]{
 
         <div class="bot-message">
             Hola 👋<br><br>
-            Soy VisionInspect AI.<br>
-            ¿En qué puedo ayudarte?
+            Soy VisionIA.<br>
+            Puedo ayudarte a explicar el análisis de la imagen, el porcentaje de daño y los defectos detectados.
+        </div>
+
+        {% if resultado %}
+
+        <div class="bot-message">
+            Ya tengo un análisis disponible.<br>
+            Puedes preguntarme:<br>
+            <b>¿Qué analizaste de la imagen?</b>
+        </div>
+
+        {% else %}
+
+        <div class="bot-message">
+            Primero sube una imagen y presiona <b>Analizar Producto</b>. Después podré explicarte el resultado.
+        </div>
+
+        {% endif %}
+
+        <div class="quick-actions">
+
+            <button
+                class="quick-btn"
+                onclick="preguntaRapida('¿Qué analizaste de la imagen?')"
+            >
+                ¿Qué analizaste?
+            </button>
+
+            <button
+                class="quick-btn"
+                onclick="preguntaRapida('¿Cuánto daño detectaste?')"
+            >
+                Daño detectado
+            </button>
+
+            <button
+                class="quick-btn"
+                onclick="preguntaRapida('Explícame el resultado de la imagen procesada.')"
+            >
+                Explicar resultado
+            </button>
+
         </div>
 
     </div>
@@ -647,6 +672,44 @@ function cerrarChat(){
     chat.style.display = 'none'
 }
 
+/* EVITAR QUE HTML ROMPA EL CHAT */
+
+function escaparHTML(texto){
+
+    let div = document.createElement(
+        'div'
+    )
+
+    div.textContent = texto
+
+    return div.innerHTML
+}
+
+/* CONVERTIR SALTOS DE LINEA */
+
+function formatearRespuesta(texto){
+
+    return escaparHTML(
+        texto
+    ).replace(
+        /\n/g,
+        '<br>'
+    )
+}
+
+/* PREGUNTAS RAPIDAS */
+
+function preguntaRapida(texto){
+
+    let input = document.getElementById(
+        "mensaje"
+    )
+
+    input.value = texto
+
+    enviarMensaje()
+}
+
 /* ENVIAR MENSAJE */
 
 async function enviarMensaje(){
@@ -665,11 +728,15 @@ async function enviarMensaje(){
         "chat-body"
     )
 
+    let mensajeSeguro = escaparHTML(
+        mensaje
+    )
+
     /* MENSAJE USUARIO */
 
     chat.innerHTML += `
         <div class="user-message">
-            ${mensaje}
+            ${mensajeSeguro}
         </div>
     `
 
@@ -679,12 +746,14 @@ async function enviarMensaje(){
 
     /* MENSAJE CARGANDO */
 
+    let idCargando = "cargando-" + Date.now()
+
     chat.innerHTML += `
         <div
             class="bot-message"
-            id="cargando"
+            id="${idCargando}"
         >
-            🤖 Pensando...
+            🤖 Pensando con Ollama...
         </div>
     `
 
@@ -714,25 +783,38 @@ async function enviarMensaje(){
         /* BORRAR CARGANDO */
 
         let cargando = document.getElementById(
-            'cargando'
+            idCargando
         )
 
         if(cargando){
             cargando.remove()
+        }
+
+        if(!respuesta.ok){
+
+            chat.innerHTML += `
+                <div class="bot-message">
+                    ${formatearRespuesta(data.respuesta || '❌ Error en el asistente')}
+                </div>
+            `
+
+            chat.scrollTop = chat.scrollHeight
+
+            return
         }
 
         /* RESPUESTA IA */
 
         chat.innerHTML += `
             <div class="bot-message">
-                ${data.respuesta}
+                ${formatearRespuesta(data.respuesta)}
             </div>
         `
 
     }catch(error){
 
         let cargando = document.getElementById(
-            'cargando'
+            idCargando
         )
 
         if(cargando){
@@ -741,7 +823,7 @@ async function enviarMensaje(){
 
         chat.innerHTML += `
             <div class="bot-message">
-                ❌ Error conectando con Gemini AI
+                ❌ Error conectando con Ollama. Revisa que Ollama esté abierto y que Flask esté funcionando.
             </div>
         `
     }
@@ -770,3 +852,4 @@ document.getElementById(
 
 </body>
 </html>
+```
